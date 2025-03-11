@@ -1,43 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const EventsSection = () => {
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      title: "Christmas Charity Drive",
-      date: "Saturday, March 15, 2025",
-      time: "5:30 AM IST",
-      tag: "DONATION",
-      category: "Charity",
-      description: "Join us to spread love and donate to the less fortunate.",
-      image:
-        "https://cdn.pixabay.com/photo/2021/12/16/19/07/family-6875069_640.jpg",
-    },
-    {
-      id: 2,
-      title: "Eid-ul-Fitr",
-      date: "Sunday, March 30, 2025",
-      time: "5:30 AM IST",
-      tag: "FREE",
-      category: "Religious",
-      description:
-        "Celebrate the festival of Eid with joy and community spirit.",
-      image:
-        "https://img.freepik.com/free-vector/eid-mubarak-festival-decorative-greeting-background_1017-18442.jpg?ga=GA1.1.1229161352.1723810304&semt=ais_hybrid",
-    },
-    {
-      id: 3,
-      title: "Holi Party",
-      date: "Friday, March 14, 2025",
-      time: "11:30 AM IST",
-      tag: "FREE Party",
-      category: "Festival",
-      description:
-        "Join us for a vibrant Holi Party with music, colors, rain dance, and delicious festive treats! 🌈✨ Celebrate joy, laughter, and endless fun with friends and family! 🎉💃",
-      image:
-        "https://cdn.pixabay.com/photo/2023/03/07/08/07/ai-generated-7835222_640.jpg",
-    },
-  ]);
+  // Load events from localStorage or use default events
+  const [events, setEvents] = useState(() => {
+    const storedEvents = localStorage.getItem("events");
+    return storedEvents
+      ? JSON.parse(storedEvents)
+      : [
+          {
+            id: 1,
+            title: "Christmas Charity Drive",
+            date: "Saturday, March 15, 2025",
+            time: "5:30 AM IST",
+            tag: "DONATION",
+            category: "Charity",
+            description:
+              "Join us to spread love and donate to the less fortunate.",
+            image:
+              "https://cdn.pixabay.com/photo/2021/12/16/19/07/family-6875069_640.jpg",
+          },
+          {
+            id: 2,
+            title: "Eid-ul-Fitr",
+            date: "Sunday, March 30, 2025",
+            time: "5:30 AM IST",
+            tag: "FREE",
+            category: "Religious",
+            description:
+              "Celebrate the festival of Eid with joy and community spirit.",
+            image:
+              "https://img.freepik.com/free-vector/eid-mubarak-festival-decorative-greeting-background_1017-18442.jpg?ga=GA1.1.1229161352.1723810304&semt=ais_hybrid",
+          },
+          {
+            id: 3,
+            title: "Holi Party",
+            date: "Friday, March 14, 2025",
+            time: "11:30 AM IST",
+            tag: "FREE Party",
+            category: "Festival",
+            description:
+              "Join us for a vibrant Holi Party with music, colors, rain dance, and delicious festive treats! 🌈✨ Celebrate joy, laughter, and endless fun with friends and family! 🎉💃",
+            image:
+              "https://cdn.pixabay.com/photo/2023/03/07/08/07/ai-generated-7835222_640.jpg",
+          },
+        ];
+  });
 
   const [newEvent, setNewEvent] = useState({
     title: "",
@@ -51,6 +58,11 @@ const EventsSection = () => {
 
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [filter, setFilter] = useState("All");
+
+  // Save events to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("events", JSON.stringify(events));
+  }, [events]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -66,8 +78,10 @@ const EventsSection = () => {
       newEvent.image &&
       newEvent.description
     ) {
-      setEvents([...events, { id: events.length + 1, ...newEvent }]);
-      alert("Event Added Successfully")
+      const updatedEvents = [...events, { id: events.length + 1, ...newEvent }];
+      setEvents(updatedEvents);
+      localStorage.setItem("events", JSON.stringify(updatedEvents));
+      alert("Event Added Successfully");
       setNewEvent({
         title: "",
         date: "",
@@ -141,7 +155,6 @@ const EventsSection = () => {
 
       {/* Add New Event Section */}
       <div className="mt-12 bg-gray-800 p-8 rounded-xl shadow-lg max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-6">
-        {/* Left Side Image */}
         <div className="md:w-1/2">
           <img
             src="https://cdn.pixabay.com/photo/2025/02/20/09/57/top-event-management-9419524_640.jpg"
@@ -150,67 +163,30 @@ const EventsSection = () => {
           />
         </div>
 
-        {/* Right Side: Add Event Form */}
         <div className="w-full md:w-1/2 px-4">
           <h3 className="text-2xl font-bold text-center text-emerald-400 mb-5">
             Add New Event
           </h3>
           <div className="grid gap-4">
-            <input
-              type="text"
-              name="title"
-              placeholder="Event Title"
-              value={newEvent.title}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="date"
-              placeholder="Event Date"
-              value={newEvent.date}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="time"
-              placeholder="Event Time"
-              value={newEvent.time}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="tag"
-              placeholder="Tag (e.g., Free, Donation)"
-              value={newEvent.tag}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg bg-gray-700 text-white"
-            />
-            <input
-              type="text"
-              name="category"
-              placeholder="Category (e.g., Religious, Charity)"
-              value={newEvent.category}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg bg-gray-700 text-white"
-            />
-            <textarea
-              name="description"
-              placeholder="Event Description"
-              value={newEvent.description}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg bg-gray-700 text-white h-20"
-            ></textarea>
-            <input
-              type="text"
-              name="image"
-              placeholder="Image URL"
-              value={newEvent.image}
-              onChange={handleChange}
-              className="p-3 w-full rounded-lg bg-gray-700 text-white"
-            />
+            {[
+              "title",
+              "date",
+              "time",
+              "tag",
+              "category",
+              "description",
+              "image",
+            ].map((field) => (
+              <input
+                key={field}
+                type="text"
+                name={field}
+                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                value={newEvent[field]}
+                onChange={handleChange}
+                className="p-3 w-full rounded-lg bg-gray-700 text-white"
+              />
+            ))}
             <button
               onClick={addEvent}
               className="bg-emerald-500 text-white py-3 w-full rounded-lg hover:bg-emerald-600 transition"
